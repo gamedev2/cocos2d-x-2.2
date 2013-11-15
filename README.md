@@ -1,13 +1,23 @@
 cocos2d-x-2.2
 =============
 
-A cocos2d-x v2.2 derived version.
-
-For reduce upload files size, I have reduce some of the big files and some of the less frequently used files
+A cocos2d-x v2.2 derived version, but also is a streamlined version.
 
 In order to reduce the size of the uploaded file, I removed some files using less or relatively large files, so you have to go to the official website (http://www.cocos2d-x.org/) to download their full version(ver 2.2).
 
-The download links are: http://cdn.cocos2d-x.org/cocos2d-x-2.2.zip
+You can extract the original file to a folder, and then use this version of the document covered it.
+
+The cocos2d-x v2.2 download links are: http://cdn.cocos2d-x.org/cocos2d-x-2.2.zip
+
+中文:
+
+这是一个 cocos2d-x v2.2 的派生版本, 同时也是一个精简版.
+
+为了减小上传文件的大小, 我移除了一些不常用或比较大的文件, 所以你必须去官网(http://www.cocos2d-x.org/)下载完整的v2.2版本.
+
+你可以把原版解压到一个文件里, 然后用这个版本的文件覆盖之, 即可.
+
+cocos2d-x v2.2版本下载的链接是: http://cdn.cocos2d-x.org/cocos2d-x-2.2.zip
 
 cocos2d-x
 =========
