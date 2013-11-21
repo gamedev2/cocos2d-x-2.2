@@ -9,6 +9,8 @@ USING_NS_CC;
 
 using namespace std;
 
+#define USE_MCI_SEND_COMMAND        1
+
 namespace CocosDenshion {
 
 typedef map<unsigned int, MciPlayer *> EffectList;
@@ -18,7 +20,16 @@ static char     s_szRootPath[MAX_PATH];
 static DWORD    s_dwRootLen;
 static char     s_szFullPath[MAX_PATH];
 
+/**
+ * added by shines77(gz_shines@msn.com), 2013-11-16
+ * For setting the volume of the background music and the effects sound
+ * on Windows use mciSendStringA(),
+ * we must transfer the path name to the short path name.
+ */
+static char     s_szFullPath_Short[MAX_PATH];
+
 static std::string _FullPath(const char * szPath);
+static std::string _FullPath_Short(const char * szPath);
 static unsigned int _Hash(const char *key);
 
 #define BREAK_IF(cond)  if (cond) break;
@@ -36,6 +47,8 @@ static MciPlayer& sharedMusic()
 }
 
 SimpleAudioEngine::SimpleAudioEngine()
+: m_fBgMusicVolume(DEFAULT_BGMUSIC_VOLUME)      // 0.5
+, m_fEffectsVolume(DEFAULT_EFFECTS_VOLUME)      // 0.5
 {
 }
 
@@ -56,10 +69,13 @@ void SimpleAudioEngine::end()
     EffectList::iterator p = sharedList().begin();
     while (p != sharedList().end())
     {
+        MciPlayer *pPlayer = p->second;
+        if (pPlayer)
+            pPlayer->Close();
         delete p->second;
         p->second = NULL;
         p++;
-    }   
+    }
     sharedList().clear();
     return;
 }
@@ -75,8 +91,15 @@ void SimpleAudioEngine::playBackgroundMusic(const char* pszFilePath, bool bLoop)
         return;
     }
 
+#if defined(USE_MCI_SEND_COMMAND) && (USE_MCI_SEND_COMMAND != 0)
     sharedMusic().Open(_FullPath(pszFilePath).c_str(), _Hash(pszFilePath));
+    sharedMusic().SetVolume(m_fBgMusicVolume);
     sharedMusic().Play((bLoop) ? -1 : 1);
+#else
+    sharedMusic().OpenA(_FullPath(pszFilePath).c_str(), _Hash(pszFilePath));
+    sharedMusic().SetVolume(m_fBgMusicVolume, _FullPath_Short(pszFilePath).c_str());
+    sharedMusic().PlayA((bLoop) ? -1 : 1);
+#endif
 }
 
 void SimpleAudioEngine::stopBackgroundMusic(bool bReleaseData)
@@ -129,7 +152,13 @@ unsigned int SimpleAudioEngine::playEffect(const char* pszFilePath, bool bLoop)
     EffectList::iterator p = sharedList().find(nRet);
     if (p != sharedList().end())
     {
+#if defined(USE_MCI_SEND_COMMAND) && (USE_MCI_SEND_COMMAND != 0)
+        p->second->SetVolume(m_fEffectsVolume);
         p->second->Play((bLoop) ? -1 : 1);
+#else
+        p->second->SetVolume(m_fEffectsVolume, pszFilePath);
+        p->second->PlayA((bLoop) ? -1 : 1);
+#endif
     }
 
     return nRet;
@@ -147,7 +176,7 @@ void SimpleAudioEngine::stopEffect(unsigned int nSoundId)
 void SimpleAudioEngine::preloadEffect(const char* pszFilePath)
 {
     int nRet = 0;
-    do 
+    do
     {
         BREAK_IF(! pszFilePath);
 
@@ -157,11 +186,14 @@ void SimpleAudioEngine::preloadEffect(const char* pszFilePath)
 
         sharedList().insert(Effect(nRet, new MciPlayer()));
         MciPlayer * pPlayer = sharedList()[nRet];
-        pPlayer->Open(_FullPath(pszFilePath).c_str(), nRet);
+        if (pPlayer != NULL)
+        {
+            pPlayer->Open(_FullPath(pszFilePath).c_str(), nRet);
 
-        BREAK_IF(nRet == pPlayer->GetSoundID());
+            BREAK_IF(nRet == pPlayer->GetSoundID());
 
-        delete pPlayer;
+            delete pPlayer;
+        }
         sharedList().erase(nRet);
         nRet = 0;
     } while (0);
@@ -212,6 +244,12 @@ void SimpleAudioEngine::stopAllEffects()
     }
 }
 
+void SimpleAudioEngine::stopAll()
+{
+    stopAllEffects();
+    stopBackgroundMusic();
+}
+
 void SimpleAudioEngine::preloadBackgroundMusic(const char* pszFilePath)
 {
 
@@ -227,7 +265,7 @@ void SimpleAudioEngine::unloadEffect(const char* pszFilePath)
         delete p->second;
         p->second = NULL;
         sharedList().erase(nID);
-    }    
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -236,20 +274,22 @@ void SimpleAudioEngine::unloadEffect(const char* pszFilePath)
 
 float SimpleAudioEngine::getBackgroundMusicVolume()
 {
-    return 1.0;
+    return m_fBgMusicVolume;
 }
 
 void SimpleAudioEngine::setBackgroundMusicVolume(float volume)
 {
+    m_fBgMusicVolume = volume;
 }
 
 float SimpleAudioEngine::getEffectsVolume()
 {
-    return 1.0;
+    return m_fEffectsVolume;
 }
 
 void SimpleAudioEngine::setEffectsVolume(float volume)
 {
+    m_fEffectsVolume = volume;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -261,16 +301,45 @@ static std::string _FullPath(const char * szPath)
     return CCFileUtils::sharedFileUtils()->fullPathForFilename(szPath);
 }
 
+/**
+ * added by shines77(gz_shines@msn.com), 2013-11-16
+ * Get the DOS's short path name through a filename
+ */
+static std::string _FullPath_Short(const char * szPath)
+{
+    //return CCFileUtils::sharedFileUtils()->fullPathForFilename_Short(szPath);
+
+    std::string fullpath_short = "";
+    std::string fullpath = CCFileUtils::sharedFileUtils()->fullPathForFilename(szPath);
+    if (fullpath.length() > 0)
+    {
+        char szShortFullPath[MAX_PATH];
+        DWORD dwShortLen;
+        szShortFullPath[0] = '\0';
+        dwShortLen = GetShortPathNameA(fullpath.c_str(), szShortFullPath, sizeof(szShortFullPath));
+        if (0 != dwShortLen)
+        {
+            fullpath_short = szShortFullPath;
+        }
+        else
+        {
+            // if dwShortLen == 0, then Handle an error condition.
+            // printf ("GetShortPathNameA failed (%d)\n", GetLastError());
+        }
+    }
+    return fullpath_short;
+}
+
 unsigned int _Hash(const char *key)
 {
     unsigned int len = strlen(key);
-    const char *end=key+len;
+    const char *end = key + len;
     unsigned int hash;
 
     for (hash = 0; key < end; key++)
     {
         hash *= 16777619;
-        hash ^= (unsigned int) (unsigned char) toupper(*key);
+        hash ^= (unsigned int)(unsigned char)toupper(*key);
     }
     return (hash);
 }

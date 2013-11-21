@@ -24,12 +24,18 @@
     <ClInclude Include="..\include\SimpleAudioEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\win32\MciPlayerA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\win32\MciPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\win32\SimpleAudioEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32\MciPlayerA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

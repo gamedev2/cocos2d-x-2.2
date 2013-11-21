@@ -156,6 +156,12 @@ public:
      @since v2.1
      */
     virtual std::string fullPathForFilename(const char* pszFileName);
+
+	/**
+	 * added by shines77(gz_shines@msn.com), 2013-11-16
+	 * Get the DOS's short path name through a filename
+	 */
+	virtual std::string fullPathForFilename_Short(const char* pszFileName);
     
     /**
      * Loads the filenameLookup dictionary from the contents of a filename.

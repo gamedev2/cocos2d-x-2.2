@@ -593,7 +593,6 @@ std::string CCFileUtils::getPathForFilename(const std::string& filename, const s
     return path;
 }
 
-
 std::string CCFileUtils::fullPathForFilename(const char* pszFileName)
 {
     CCAssert(pszFileName != NULL, "CCFileUtils: Invalid path");
@@ -641,6 +640,38 @@ std::string CCFileUtils::fullPathForFilename(const char* pszFileName)
 
     // The file wasn't found, return the file name passed in.
     return pszFileName;
+}
+
+/**
+ * added by shines77(gz_shines@msn.com), 2013-11-16
+ * Get the DOS's short path name through a filename
+ */
+std::string CCFileUtils::fullPathForFilename_Short(const char* pszFileName)
+{
+	
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	std::string fullpath_short = "";
+	std::string fullpath = fullPathForFilename(pszFileName);
+	if (fullpath.length() > 0)
+	{
+		char szShortFullPath[MAX_PATH];
+		DWORD dwShortLen;
+		szShortFullPath[0] = '\0';
+		dwShortLen = GetShortPathNameA(fullpath.c_str(), szShortFullPath, sizeof(szShortFullPath));
+		if (0 != dwShortLen)
+		{
+			// if dwShortLen == 0, then Handle an error condition.
+			// printf ("GetShortPathNameA failed (%d)\n", GetLastError());
+			// return NULL;
+			fullpath_short = szShortFullPath;
+		}
+	}
+	return fullpath_short;
+#else
+	// other platform have not short path name, except the Windows(Win32)
+	return fullPathForFilename(pszFileName);
+#endif
+
 }
 
 const char* CCFileUtils::fullPathFromRelativeFile(const char *pszFilename, const char *pszRelativeFile)
@@ -793,7 +824,7 @@ void CCFileUtils::loadFilenameLookupDictionaryFromFile(const char* filename)
 
 std::string CCFileUtils::getFullPathForDirectoryAndFilename(const std::string& strDirectory, const std::string& strFilename)
 {
-    std::string ret = strDirectory+strFilename;
+    std::string ret = strDirectory + strFilename;
     if (!isFileExist(ret)) {
         ret = "";
     }

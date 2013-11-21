@@ -65,8 +65,6 @@ THE SOFTWARE.
 #include "CCEGLView.h"
 #include "CCConfiguration.h"
 
-
-
 /**
  Position of the FPS
  
@@ -1071,12 +1069,12 @@ void CCDisplayLinkDirector::mainLoop(void)
         purgeDirector();
     }
     else if (! m_bInvalid)
-     {
-         drawScene();
+    {
+        drawScene();
      
-         // release the objects
-         CCPoolManager::sharedPoolManager()->pop();        
-     }
+        // release the objects
+        CCPoolManager::sharedPoolManager()->pop();        
+    }
 }
 
 void CCDisplayLinkDirector::stopAnimation(void)

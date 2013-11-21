@@ -32,6 +32,13 @@ THE SOFTWARE.
 #include <ctype.h>
 #include <string.h>
 
+/**
+ * added by shines77(gz_shines@msn.com), 2013-11-16
+ * Define the defeault volume of the background music and the effects sound.
+ */
+#define DEFAULT_BGMUSIC_VOLUME      (0.5)
+#define DEFAULT_EFFECTS_VOLUME      (0.5)
+
 namespace CocosDenshion {
 
 class TypeInfo
@@ -43,13 +50,13 @@ public:
 static inline unsigned int getHashCodeByString(const char *key)
 {
 	unsigned int len = strlen(key);
-	const char *end=key+len;
+	const char *end = key + len;
 	unsigned int hash;
 
 	for (hash = 0; key < end; key++)
 	{
 		hash *= 16777619;
-		hash ^= (unsigned int) (unsigned char) toupper(*key);
+		hash ^= (unsigned int)(unsigned char)toupper(*key);
 	}
 	return (hash);
 }
@@ -112,10 +119,11 @@ public:
 
     /**
     @brief Stop playing background music
-    @param bReleaseData If release the background music data or not.As default value is false
+    @param bReleaseData If release the background music data or not. As default value is false
     @js stopMusic
     */
     void stopBackgroundMusic(bool bReleaseData);
+
     /**
      @js stopMusic
      */
@@ -224,6 +232,11 @@ public:
     void stopAllEffects();
 
     /**
+    @brief Stop playing background music and all playing sound effects
+    */
+    void stopAll();
+
+    /**
     @brief          preload a compressed audio file
     @details        the compressed audio will be decode to wave, then write into an 
     internal buffer in SimpleaudioEngine
@@ -235,6 +248,14 @@ public:
     @param[in]        pszFilePath        The path of the effect file,or the FileName of T_SoundResInfo
     */
     void unloadEffect(const char* pszFilePath);
+
+private:
+	/**
+	 * added by shines77(gz_shines@msn.com), 2013-11-16
+	 * for setting the defeault volume of the background music and the effects sound.
+	 */
+	float m_fBgMusicVolume;
+	float m_fEffectsVolume;
 };
 
 } // end of namespace CocosDenshion

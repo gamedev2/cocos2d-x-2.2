@@ -15,7 +15,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     // create the application instance
     AppDelegate app;
     CCEGLView* eglView = CCEGLView::sharedOpenGLView();
-    eglView->setViewName("WoPet");
+    eglView->setViewName("World Of PetCraft");
     //eglView->setFrameSize(1280, 800);
     eglView->setFrameSize(1024, 640);
     return CCApplication::sharedApplication()->run();
