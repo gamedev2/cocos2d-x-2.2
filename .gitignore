@@ -55,8 +55,8 @@ scripting/javascript/
 tools/cocos2d-console/console/bin/
 
 # Ignore some of the too big resource files
-cocos2d-x-2.2/projects/WoPet/Resources/assets/
-cocos2d-x-2.2/projects/WoPet/Resources/music/
+projects/WoPet/Resources/assets/
+projects/WoPet/Resources/music/
 samples/Cpp/TestCpp/Resources/
 samples/Javascript/Shared/games/
 samples/Javascript/Shared/tests/
