@@ -3,6 +3,28 @@
 
 #include "cocos2d.h"
 
+class CCAudio : public cocos2d::CCObject
+{
+public:
+    CCAudio() {};
+    virtual ~CCAudio() {};
+
+    //static CCAudio *s_sharedAudioEngine = NULL;
+
+    static CCAudio *sharedEngine() {
+        static CCAudio s_sharedAudioEngine;
+        return &s_sharedAudioEngine;
+        /*
+        if (s_sharedAudioEngine == NULL) {
+            s_sharedAudioEngine = new CCAudio();
+        }
+        //*/
+    };
+
+    void play() { };
+    void stop() { };
+};
+
 class HelloWorld : public cocos2d::CCLayer
 {
 public:
@@ -21,7 +43,8 @@ public:
     // a selector callback
     void menuCloseCallback(CCObject* pSender);
 
-    void tick(float interval);
+    void sprite_fly_tick(float interval);
+    void sprite_fly_tick2(float interval);
     
     // implement the "static node()" method manually
     CREATE_FUNC(HelloWorld);
