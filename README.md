@@ -9,13 +9,14 @@ You can extract the original file to a folder, and then use this version of the 
 
 The cocos2d-x v2.2 download links are: http://cdn.cocos2d-x.org/cocos2d-x-2.2.zip
 
-中文:
+中文说明:
 
 这是一个 cocos2d-x v2.2 的派生版本, 同时也是一个精简版.
 
-为了减小上传文件的大小, 我移除了一些不常用或比较大的文件, 所以你必须去官网( http://www.cocos2d-x.org/ )下载完整的v2.2版本.
+为了减小上传文件的大小, 我移除了一些不常用或比较大的文件,
+所以你必须去官网( http://www.cocos2d-x.org/ )下载完整的v2.2版本.
 
-你可以把原版解压到一个文件里, 然后用这个版本的文件覆盖之, 即可.
+你可以把原版解压到一个文件夹里, 然后用这个版本的文件覆盖之, 即可.
 
 cocos2d-x v2.2版本下载的链接是: http://cdn.cocos2d-x.org/cocos2d-x-2.2.zip
 
